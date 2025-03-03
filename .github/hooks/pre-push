@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+"""
+Check if the current branch name is valid.
+
+Allowed formats:
+- feature/description-here
+- bugfix/description-here
+- hotfix/description-here
+- release/version-number
+- docs/description-here
+
+Example:
+- feature/add-script-extraction
+
+"""
+
+import re
+import subprocess
+import sys
+
+
+def get_current_branch():
+    """Get the current branch name."""
+    result = subprocess.run(
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+        capture_output=True,
+        text=True,
+    )  # noqa: E501
+    return result.stdout.strip()
+
+
+# Get current branch name
+branch = get_current_branch()
+
+# Define branch naming pattern
+# Allowed formats:
+# feature/description-here
+# bugfix/description-here
+# hotfix/description-here
+# release/version-number
+# docs/description-here
+pattern = r"^(feature|bugfix|hotfix|release|docs)/[a-z0-9-]+$"
+
+if not re.match(pattern, branch):
+    print("ERROR: Invalid branch name format")
+    print("Branch name must match one of these patterns:")
+    print("  feature/description-in-kebab-case")
+    print("  bugfix/description-in-kebab-case")
+    print("  hotfix/description-in-kebab-case")
+    print("  release/version-number")
+    print("  docs/description-in-kebab-case")
+    print("\nExample: feature/add-script-extraction")
+    sys.exit(1)
+
+sys.exit(0)

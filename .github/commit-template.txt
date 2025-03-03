@@ -1,0 +1,20 @@
+# <type>: <subject>
+# |<----  Using a maximum of 50 characters  ---->|
+#
+# <body>
+# |<----   Try to limit each line to a maximum of 72 characters   ---->|
+#
+# Types:
+# feat     (new feature)
+# fix      (bug fix)
+# refactor (refactoring code)
+# style    (formatting, missing semicolons, etc; no code change)
+# docs     (changes to documentation)
+# test     (adding or refactoring tests; no production code change)
+# chore    (updating build tasks, package manager configs, etc)
+#
+# Example:
+# feat: add script extraction functionality
+#
+# Implement XML script extraction with support for both single files
+# and directories. Add CTL file generation with proper formatting.
