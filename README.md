@@ -1,86 +1,130 @@
 # Code Extractor
 
-A tool for extracting and managing scripts from XML files. This tool allows you to extract scripts from XML files into separate CTL files and update XML files with scripts from CTL files.
+A Python-based tool for extracting and managing scripts from XML files. This tool is designed to help you:
+- Extract scripts from XML files into easily editable CTL files
+- Update XML files with modified scripts from CTL files
+- Handle scripts both inside and outside of shapes
+- Process single files or entire directories recursively
 
 ## Features
 
-- Extract scripts from single XML files or entire directories
-- Update XML files with scripts from CTL files
-- Support for scripts both inside and outside shapes
-- Automatic CTL file generation with proper formatting
-- Directory-based batch processing
+- **XML to CTL Extraction**:
+  - Extracts all scripts from XML files
+  - Preserves script context (whether it's inside a shape or not)
+  - Creates clearly marked script sections in CTL files
+  - Handles XML entities and CDATA sections
 
-## Installation
+- **CTL to XML Updates**:
+  - Updates XML files with modified scripts from CTL files
+  - Maintains script context (shape association)
+  - Properly escapes special characters
+  - Wraps content in CDATA sections
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/CodeExtractor.git
-cd CodeExtractor
-```
+- **Directory Processing**:
+  - Recursively process all XML or CTL files in a directory
+  - Maintains directory structure
+  - Provides detailed success/failure statistics
 
-2. Set up Git hooks:
-```bash
-mkdir -p .git/hooks
-cp .github/hooks/* .git/hooks/
-chmod +x .git/hooks/*
-git config commit.template .github/commit-template.txt
-```
+- **Script Context Preservation**:
+  - Distinguishes between scripts in shapes and outside shapes
+  - Uses `shape_name::script_name` format for scripts inside shapes
+  - Prevents accidental script overwrites
 
-## Development Conventions
+## Setup
 
-### Branch Naming
-
-All branches must follow this naming convention:
-- `feature/description-in-kebab-case` - for new features
-- `bugfix/description-in-kebab-case` - for bug fixes
-- `hotfix/description-in-kebab-case` - for urgent fixes
-- `release/version-number` - for release branches
-- `docs/description-in-kebab-case` - for documentation updates
-
-Example: `feature/add-script-extraction`
-
-### Commit Messages
-
-Commit messages must follow this format:
-```
-<type>: <subject>
-
-<body>
-```
-
-Types:
-- `feat`: new feature
-- `fix`: bug fix
-- `refactor`: code refactoring
-- `style`: formatting changes
-- `docs`: documentation changes
-- `test`: test-related changes
-- `chore`: build/tool updates
-
-Example:
-```
-feat: add script extraction functionality
-
-Implement XML script extraction with support for both single files
-and directories. Add CTL file generation with proper formatting.
-```
+1. Clone the repository
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Unix/macOS
+   # or
+   .\venv\Scripts\activate  # On Windows
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Install pre-commit hooks:
+   ```bash
+   pre-commit install
+   ```
 
 ## Usage
 
-```bash
-# Extract scripts from a single XML file
-python -m src.main extract path/to/file.xml
+### Single File Operations
 
-# Update XML file from CTL file
-python -m src.main update path/to/file.ctl
+1. Extract scripts from an XML file:
+   ```bash
+   python -m src.main extract path/to/file.xml
+   ```
 
-# Process all XML files in a directory
-python -m src.main extract-dir path/to/directory
+2. Update XML from a CTL file:
+   ```bash
+   python -m src.main update path/to/file.ctl
+   ```
 
-# Update all XML files from CTL files in a directory
-python -m src.main update-dir path/to/directory
+### Directory Operations
+
+1. Extract scripts from all XML files in a directory:
+   ```bash
+   python -m src.main extract-dir path/to/xml/directory
+   ```
+
+2. Update all XML files from CTL files in a directory:
+   ```bash
+   python -m src.main update-dir path/to/ctl/directory
+   ```
+
+### File Organization
+
+The tool expects the following directory structure:
+- XML files in `/xml/path/to/file.xml`
+- CTL files in `/ctl/path/to/file.ctl`
+
+When extracting scripts:
+- If input is `/path/to/xml/file.xml`, output will be `/path/to/ctl/file.ctl`
+- If input is `xml/file.xml`, output will be `ctl/file.ctl`
+
+### CTL File Format
+
+The CTL files use a clear marker format:
+
+For scripts outside shapes:
 ```
+//START_SCRIPT: script_name
+script_content
+//END_SCRIPT: script_name
+```
+
+For scripts inside shapes:
+```
+//START_SCRIPT: shape_name::script_name
+script_content
+//END_SCRIPT: shape_name::script_name
+```
+
+## Development
+
+This project uses pre-commit hooks to maintain code quality. The following checks are performed:
+- Black (code formatting)
+- Flake8 (code linting)
+- isort (import sorting)
+- Trailing whitespace removal
+- End of file fixing
+
+## Error Handling
+
+The tool provides detailed error messages for:
+- Missing files
+- Malformed XML
+- Invalid script contexts
+- File access issues
+
+When processing directories, the tool will:
+- Continue processing even if some files fail
+- Provide a summary of successful and failed operations
+- Show detailed error messages for failed files
 
 ## License
 
-[Add your license here]
+MIT
